@@ -39,7 +39,7 @@ RUN echo "Begin" && ls -lrt \
   && sed -i -e 's:mouse=a:mouse-=a:g' /usr/share/vim/vim81/defaults.vim \
   \
   && echo "********** install 'pdo_mysql mysqli bcmath' ..." \
-  && docker-php-ext-install pdo_mysql mysqli bcmath
+  && docker-php-ext-install pdo_mysql mysqli bcmath \
   \
   && echo "********** install 'gd' ..." \
   && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-png-dir=/usr/include/ \
