@@ -36,8 +36,8 @@ RUN echo "Begin" && ls -lrt \
   && echo "********** 安装临时依赖" \
   && apk add --no-cache --virtual=.build-deps $BUILD_PACKAGES \
   \
-  && sed -i -e 's:mouse=a:mouse-=a:g' /usr/share/vim/vim81/defaults.vim \
-  \
+##  && sed -i -e 's:mouse=a:mouse-=a:g' /usr/share/vim/vim81/defaults.vim \
+##  \
   && echo "********** install 'pdo_mysql mysqli bcmath' ..." \
   && docker-php-ext-install pdo_mysql mysqli bcmath \
   \
