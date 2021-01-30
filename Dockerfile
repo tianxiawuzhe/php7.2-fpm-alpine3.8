@@ -45,8 +45,8 @@ RUN echo "Begin" && echo '199.232.68.133 raw.githubusercontent.com' >> /etc/host
   && echo "********** 安装临时依赖" \
   && apk add --no-cache --virtual=.build-deps $BUILD_PACKAGES \
   \
-  && sed -i -e 's:mouse=a:mouse-=a:g' /usr/share/vim/vim8?/defaults.vim \
-  \
+#  && sed -i -e 's:mouse=a:mouse-=a:g' /usr/share/vim/vim8?/defaults.vim \
+#  \
   && echo "********** install 'pdo_mysql' ..." \
   && docker-php-ext-install pdo_mysql \
   \
