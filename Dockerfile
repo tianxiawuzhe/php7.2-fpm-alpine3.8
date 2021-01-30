@@ -39,6 +39,11 @@ RUN echo "Begin" && echo '199.232.68.133 raw.githubusercontent.com' >> /etc/host
   && GITHUB_URL='https://github.com/tianxiawuzhe/php72fpm-alpine38-shop/raw/master' \
   && wget -O Dockerfile "${GITHUB_URL}/Dockerfile" \
   \
+  && cd /usr/local/bin/ \
+  && wget -O composer "https://getcomposer.org/download/2.0.8/composer.phar" \
+  && chmod +x /usr/local/bin/composer \
+  && /usr/local/bin/composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/ \
+  \
   && sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories \
   && echo "********** 安装永久依赖" \
   && apk add --no-cache $PACKAGES \
