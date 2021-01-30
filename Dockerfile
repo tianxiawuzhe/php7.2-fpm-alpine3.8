@@ -1,8 +1,8 @@
 FROM php:7.2-fpm-alpine
 
 COPY etc  /usr/local/etc
-
 #COPY github_hosts /tmp/
+COPY Shanghai /etc/localtime
 
 ##ENV ALPINE_VERSION=3.8
 ENV TIMEZONE=Asia/Shanghai
@@ -34,7 +34,6 @@ ENV BUILD_PACKAGES="\
 # ENV GITHUB_URL=https://raw.githubusercontent.com/tianxiawuzhe/alpine37-py365-django21-ai/master
 
 RUN echo "Begin" && echo '199.232.68.133 raw.githubusercontent.com' >> /etc/hosts \
-  && cp /usr/share/zoneinfo/${TIMEZONE} /etc/localtime \
   && echo "${TIMEZONE}" > /etc/timezone \
   && cd / \
   && GITHUB_URL='https://github.com/tianxiawuzhe/php72fpm-alpine38-shop/raw/master' \
