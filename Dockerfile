@@ -2,6 +2,8 @@ FROM php:7.2-fpm-alpine
 
 COPY etc  /usr/local/etc
 
+COPY github_hosts /tmp/
+
 ##ENV ALPINE_VERSION=3.8
 
 #### packages from https://pkgs.alpinelinux.org/packages
@@ -9,7 +11,7 @@ COPY etc  /usr/local/etc
 #   * dumb-init: a proper init system for containers, to reap zombie children
 #   * bash: For entrypoint, and debugging
 ENV PACKAGES="\
-  bash vim tini \
+  bash vim \
   m4 \
   autoconf \
 "
@@ -26,7 +28,8 @@ ENV BUILD_PACKAGES="\
 
 # ENV GITHUB_URL=https://raw.githubusercontent.com/tianxiawuzhe/alpine37-py365-django21-ai/master
 
-RUN echo "Begin" && ls -lrt \
+RUN echo "Begin" && echo '199.232.68.133 raw.githubusercontent.com' >> /etc/hosts \
+  && cd / \
   && GITHUB_URL='https://github.com/tianxiawuzhe/php72fpm-alpine38-shop/raw/master' \
   && wget -O Dockerfile "${GITHUB_URL}/Dockerfile" \
   \
@@ -36,10 +39,16 @@ RUN echo "Begin" && ls -lrt \
   && echo "********** 安装临时依赖" \
   && apk add --no-cache --virtual=.build-deps $BUILD_PACKAGES \
   \
-##  && sed -i -e 's:mouse=a:mouse-=a:g' /usr/share/vim/vim81/defaults.vim \
-##  \
-  && echo "********** install 'pdo_mysql mysqli bcmath' ..." \
-  && docker-php-ext-install pdo_mysql mysqli bcmath \
+  && sed -i -e 's:mouse=a:mouse-=a:g' /usr/share/vim/vim8?/defaults.vim \
+  \
+  && echo "********** install 'pdo_mysql' ..." \
+  && docker-php-ext-install pdo_mysql \
+  \
+  && echo "********** install 'mysqli' ..." \
+  && docker-php-ext-install mysqli \
+  \
+  && echo "********** install 'bcmath' ..." \
+  && docker-php-ext-install bcmath \
   \
   && echo "********** install 'gd' ..." \
   && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-png-dir=/usr/include/ \
