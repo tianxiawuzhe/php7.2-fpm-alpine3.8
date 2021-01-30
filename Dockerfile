@@ -56,19 +56,16 @@ RUN echo "Begin" && echo '199.232.68.133 raw.githubusercontent.com' >> /etc/host
   && echo "********** install 'bcmath' ..." \
   && docker-php-ext-install bcmath \
   \
-  && echo "********** install 'redis' ..." \
-  && docker-php-ext-install redis \
-  \
   && echo "********** install 'gd' ..." \
   && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-png-dir=/usr/include/ \
   && docker-php-ext-install -j$(nproc) gd \
   \
-#  && echo "********** install 'redis' ..." \
-#  && cd /tmp && redis=redis-5.3.2.tgz \
-#  && wget -O ${redis} "https://pecl.php.net/get/${redis}" \
-#  && (printf "no\nno\nno\n" | pecl install ${redis}) \
-#  && rm /tmp/${redis} \
-#  \
+  && echo "********** install 'redis' ..." \
+  && cd /tmp && redis=redis-5.3.2.tgz \
+  && wget -O ${redis} "https://pecl.php.net/get/${redis}" \
+  && (printf "no\nno\nno\n" | pecl install ${redis}) \
+  && rm /tmp/${redis} \
+  \
   && echo "********** enable install ..." \
   && docker-php-ext-enable pdo_mysql mysqli bcmath gd redis \
   && php -m | grep -E "(pdo_mysql|mysqli|bcmath|gd|redis)" \
