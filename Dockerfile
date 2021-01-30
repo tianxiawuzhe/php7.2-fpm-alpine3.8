@@ -2,18 +2,25 @@ FROM php:7.2-fpm-alpine
 
 COPY etc  /usr/local/etc
 
-COPY github_hosts /tmp/
+#COPY github_hosts /tmp/
 
 ##ENV ALPINE_VERSION=3.8
+ENV TIMEZONE=Asia/Shanghai
+ENV PHP_MEMORY_LIMIT=512M
+ENV MAX_UPLOAD=50M
+ENV PHP_MAX_FILE_UPLOAD=200
+ENV PHP_MAX_POST=100M
 
 #### packages from https://pkgs.alpinelinux.org/packages
 # These are always installed. Notes:
 #   * dumb-init: a proper init system for containers, to reap zombie children
 #   * bash: For entrypoint, and debugging
+#   * libpng  freetype libjpeg-turbo: For gd 
+#   * m4 autoconf: For redis
+#  bash vim \
 ENV PACKAGES="\
-  bash vim \
-  m4 \
-  autoconf \
+  libpng  freetype libjpeg-turbo \
+  m4 autoconf \
 "
 
 # These packages are not installed immediately, but are added at runtime or ONBUILD to shrink the image as much as possible. Notes:
@@ -22,13 +29,13 @@ ENV PACKAGES="\
 ENV BUILD_PACKAGES="\
   build-base \
   libpng-dev freetype-dev libjpeg-turbo-dev \
-#  linux-headers \
-#  gcc g++ make \
 "
 
 # ENV GITHUB_URL=https://raw.githubusercontent.com/tianxiawuzhe/alpine37-py365-django21-ai/master
 
 RUN echo "Begin" && echo '199.232.68.133 raw.githubusercontent.com' >> /etc/hosts \
+  && cp /usr/share/zoneinfo/${TIMEZONE} /etc/localtime \
+  && echo "${TIMEZONE}" > /etc/timezone \
   && cd / \
   && GITHUB_URL='https://github.com/tianxiawuzhe/php72fpm-alpine38-shop/raw/master' \
   && wget -O Dockerfile "${GITHUB_URL}/Dockerfile" \
@@ -50,16 +57,19 @@ RUN echo "Begin" && echo '199.232.68.133 raw.githubusercontent.com' >> /etc/host
   && echo "********** install 'bcmath' ..." \
   && docker-php-ext-install bcmath \
   \
+  && echo "********** install 'redis' ..." \
+  && docker-php-ext-install redis \
+  \
   && echo "********** install 'gd' ..." \
   && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-png-dir=/usr/include/ \
   && docker-php-ext-install -j$(nproc) gd \
   \
-  && echo "********** install 'redis' ..." \
-  && cd /tmp && redis=redis-5.3.2.tgz \
-  && wget -O ${redis} "https://pecl.php.net/get/${redis}" \
-  && (printf "no\nno\nno\n" | pecl install ${redis}) \
-  && rm /tmp/${redis} \
-  \
+#  && echo "********** install 'redis' ..." \
+#  && cd /tmp && redis=redis-5.3.2.tgz \
+#  && wget -O ${redis} "https://pecl.php.net/get/${redis}" \
+#  && (printf "no\nno\nno\n" | pecl install ${redis}) \
+#  && rm /tmp/${redis} \
+#  \
   && echo "********** enable install ..." \
   && docker-php-ext-enable pdo_mysql mysqli bcmath gd redis \
   && php -m | grep -E "(pdo_mysql|mysqli|bcmath|gd|redis)" \
